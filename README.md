@@ -10,5 +10,5 @@
   The dataset that i use is from kaggle food com recipes and user interactions
   https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions
 
-## tools and programming language
+## Tools and Programming Language
   Tools and programming language that i use is anaconda with python and flask to deploy it to website
