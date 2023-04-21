@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <title>Recipe Recomendation</title>
+    <style>
+    .title {
+      display: block;
+      padding: 15px;
+      width: 100%;
+      background-color: rgb(245, 52, 52);
+      color: white;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .toggler-wrapper {
+        width: 45px;
+        height: 25px;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .toggler-wrapper input[type="checkbox"] {
+        display: none;
+    }
+
+    .toggler-wrapper input[type="checkbox"]:checked+.toggler-slider {
+        background-color: #44cc66;
+    }
+
+    .toggler-wrapper .toggler-slider {
+        background-color: #ccc;
+        position: absolute;
+        border-radius: 100px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+         -webkit-transition: all 300ms ease;
+         transition: all 300ms ease;
+    }
+
+    .toggler-wrapper .toggler-knob {
+        position: absolute;
+        -webkit-transition: all 300ms ease;
+        transition: all 300ms ease;
+    }
+
+    .toggler-wrapper.style-1 input[type="checkbox"]:checked+.toggler-slider .toggler-knob {
+        left: calc(100% - 19px - 3px);
+    }
+
+    .toggler-wrapper.style-1 .toggler-knob {
+        width: calc(25px - 6px);
+        height: calc(25px - 6px);
+        border-radius: 50%;
+        left: 3px;
+        top: 3px;
+        background-color: #fff;
+    }
+    .selectbutton {
+        width: 140px;
+        height: 35px;
+        padding: 4px;
+        border-radius: 4px;
+        box-shadow: 2px 2px 8px #999;
+        background: #eee;
+        border: none;
+        outline: none;
+        display: inline-block;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        text-align: center;
+      }
+      .labelselect {
+        position: relative;
+        left: 9.8%;
+        right: 50%;
+      }
+      .labelselect:after {
+        content: '<>';
+        font: 11px "Consolas", monospace;
+        color: #666;
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        transform: rotate(90deg);
+        right: 8px;
+        top: 2px;
+        padding: 0 0 2px;
+        border-bottom: 1px solid #ddd;
+        position: absolute;
+        pointer-events: none;
+      }
+      .labelselect:before {
+        content: '';
+        right: 6px;
+        top: 0px;
+        width: 20px;
+        height: 20px;
+        background: #eee;
+        position: absolute;
+        pointer-events: none;
+        display: block;
+      }
+    </style>
+    
+</head>
+<body>
+    <main>
+        <div class="text-center title">
+          <h2>Recipe Recomendation</h2>
+        </div><br>
+        <form action="{{ url_for('generate') }}" method="post">
+          <label class="labelselect">
+            <select class= "selectbutton"  name="foodname">
+              <option value="781">1 dish hot fudge swirl cake</option>
+              <option value="946">15 minute florentine pasta salad</option>
+              <option value="1069">2 x 2 cottage cheese smoothie</option>
+              <option value="1064">2 pot stove top unstuffed cabbage rolls</option>
+              <option value="1297">3 2 1 crock pot roast beef</option>
+              <option value="1231">3 ingredient chewy macaroons</option>
+              <option value="1369">30 second margarita</option>
+              <option value="1462">4 in 1 bean casserole</option>
+              <option value="1415">4 hour beef stew</option>
+              <option value="1493">4th of july flag cake</option>
+              <option value="127">50 chili for the crockpot</option>
+              <option value="1917">a fun and frolic kind of avocado  bacon  and tomato wrap yippee</option>
+              <option value="2311">abuela s frijoles negros   grandma s cuban black beans</option>
+              <option value="2636">afghan ambrosia haf miwah</option>
+              <option value="2878">aiken pool hall hot dogs</option>
+              <option value="3157">algerian  beef</option>
+              <option value="3250">all american club</option>
+              <option value="3387">all in one spaghetti frittata</option>
+              <option value="3307">all purpose chicken   broth from the crock pot</option>
+              <option value="3656">almond cupcakes</option>
+              <option value="3663">almond deviled eggs</option>
+              <option value="4277">als  award winning garlic cheese ball</option>
+              <option value="4611">amazing rice pudding</option>
+              <option value="4618">amazing simple rack of lamb with cabernet sauce</option>
+              <option value="4639">amazing toffee peanut crunch ice cream cake</option>
+              <option value="4651">amazing whipped sweet potatoes</option>
+              <option value="636">chocolate  cherry pecan biscotti</option>
+              <option value="470">no fettuccine  spaghetti alfredo</option>
+              <option value="474">no time flat nuked nachos with salsa and cheese</option>
+              <option value="676">spicy  pasta fagioli</option>
+            </select>
+          </label>
+          
+            <button type="submit" style="position: absolute; left: 290px;" class="btn btn-success">
+              Generate
+            </button>
+          
+        </form>
+
+
+        <div class="container input-container mt-2">
+          <h4 class="text-center mt-3">Input Preference</h4>
+
+          <h4 class="text-center mt-3">Nationality</h4>
+          <br />
+          <div class="container">
+            <form action="{{ url_for('prediction') }}" method="post">
+              <div class="row g-3">
+                <div>
+                    <!-- Toggle Button Style 1 -->
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">African</div>
+                    <label class="toggler-wrapper style-1">
+                      <input type="checkbox" value="african" name="african">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="african">    
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">American</div>
+                    <label class="toggler-wrapper style-1">
+                      <input type="checkbox" value="american" name="american">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="american">                     
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Asian</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="asian" name="asian">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="asian">               
+                    </label>
+                    
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Australian</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="australian" name="australian">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="australian">                     
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Chinese</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="chinese" name="chinese">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="chinese">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">European</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="european" name="european">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="european">                     
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Filipino</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="filipino" name="filipino">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="filipino">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">French</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="french" name="french">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="french">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">German</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="german" name="german">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="german">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Hawaiian</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="hawaiian" name="hawaiian">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="hawaiian">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Hungarian</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="hungarian" name="hungarian">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="hungarian">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Indonesian</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="indonesian" name="indonesian">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="indonesian">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Italian</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="italian" name="italian">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="italian">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Japanese</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="japanese" name="japanese">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="japanese">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Mexican</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="mexican" name="mexican">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="mexican">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">Russian</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="russian" name="russian">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="russian">                      
+                    </label>
+
+                    <div class="badge" style="color: black; position: relative; bottom: 8px;">thai</div>
+                    <label class="toggler-wrapper style-1">                        
+                      <input type="checkbox" value="thai" name="thai">
+                      <div class="toggler-slider">
+                        <div class="toggler-knob"></div>
+                      </div>                      
+                      <input type="hidden" value="kosong" name="thai">                      
+                    </label>
+                    <!-- End Toggle Button Style 1 -->
+
+                </div>
+
+              </div>
+
+              <div>
+              
+              <h4 class="text-center mt-3">Time to make</h4>
+              
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">1 day or more</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="1-day-or-more" name="1-day-or-more">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="1-day-or-more">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">4 hours or less</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="4-hours-or-less" name="4-hours-or-less">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="4-hours-or-less">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">60 minutes or less</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="60-minutes-or-less" name="60-minutes-or-less">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="60-minutes-or-less">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">30 minutes or less</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="30-minutes-or-less" name="30-minutes-or-less">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="30-minutes-or-less">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">15 minutes or less</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="15-minutes-or-less" name="15-minutes-or-less">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="15-minutes-or-less">                    
+              </label>
+
+              </div>
+
+              <div>  
+
+              <h4 class="text-center mt-3">Fruits</h4>
+              
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Apples</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="apples" name="apples">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="apples">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Avocado</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="avocado" name="avocado">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="avocado">                   
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Bananas</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="bananas" name="bananas">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="bananas">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Citrus</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="citrus" name="citrus">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="citrus">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Corn</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="corn" name="corn">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="corn">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Grapes</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="grapes" name="grapes">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="grapes">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Lemon</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="lemon" name="lemon">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="lemon">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Mango</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="mango" name="mango">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="mango">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Melons</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="melons" name="melons">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="melons">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Peaches</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="peaches" name="peaches">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="peaches">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Pears</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="pears" name="pears">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="pears">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Pineapple</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="pineapple" name="pineapple">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="pineapple">                      
+              </label>
+
+              </div>
+              
+              <div>             
+              <h4 class="text-center mt-3">Ingredient</h4>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Bacon</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="bacon" name="bacon">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="bacon">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Beef</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="beef" name="beef">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="beef">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Chicken</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="chicken" name="chicken">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="chicken">                       
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Clams</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="clams" name="clams">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="clams">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Crab</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="crab" name="crab">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="crab">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Duck</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="duck" name="duck">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="duck">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Fish</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="fish" name="fish">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="fish">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Pork</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="pork" name="pork">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="pork">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Vegetables</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="vegetables" name="vegetables">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="vegetables">                   
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Cheese</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="cheese" name="cheese">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="cheese">                    
+              </label>
+              <br>
+              <div class="badge" style="color: black; position: relative; bottom: 8px; ">Eggs</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="eggs" name="eggs">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="eggs">                    
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Breads</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="breads" name="breads">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="breads">                   
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Pasta</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="pasta" name="pasta">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="pasta">                     
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Spaghetti</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="spaghetti" name="spaghetti">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="spaghetti">                   
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Rice</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="rice" name="rice">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="rice">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Potatoes</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="potatoes" name="potatoes">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="potatoes">                  
+              </label>
+
+              </div> 
+
+              <div>
+
+              <h4 class="text-center mt-3">Others</h4>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Beginner cook</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="beginner-cook" name="beginner-cook">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="beginner-cook">            
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Breakfast</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="breakfast" name="breakfast">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="breakfast">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Brunch</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="brunch" name="brunch">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="brunch">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Lunch</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="lunch" name="lunch">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="lunch">                      
+              </label>
+
+              <div class="badge" style="color: black; position: relative; bottom: 8px;">Beverages</div>
+              <label class="toggler-wrapper style-1">                        
+                <input type="checkbox" value="beverages" name="beverages">
+                <div class="toggler-slider">
+                  <div class="toggler-knob"></div>
+                </div>                      
+                <input type="hidden" value="kosong" name="beverages">                     
+              </label>
+
+
+
+              </div>
+              
+              <br>
+
+              <button type="submit" class="btn btn-success">
+                Generate
+              </button>
+            </form>
+
+            
+
+</body>
+</html>
